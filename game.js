@@ -1,23 +1,23 @@
 import kaboom from "kaboom"
 
-// Initialize context
 kaboom({
-    background: [20, 20, 20], // Dark background
+    background: [30, 30, 30],
 })
 
-// Define constants for movement
-const SPEED = 320
-const JUMP_FORCE = 640
-const SLIDE_SPEED = 600
+// 1. SET THE PHYSICS CONSTANTS
+const SPEED = 400
+const JUMP_FORCE = 800
+setGravity(2400) // This makes the player fall
 
-// Load a simple square for the player (or use an image later)
+// 2. DESIGN THE LEVEL
+// "=" is a platform, "@" is where the player starts
 addLevel([
-    "================",
-    "=              =",
-    "=              =",
-    "=      @       =",
-    "=              =",
-    "================",
+    "                        ",
+    "                        ",
+    "                        ",
+    "    @                   ",
+    "                        ",
+    "========================",
 ], {
     tileWidth: 40,
     tileHeight: 40,
@@ -26,47 +26,52 @@ addLevel([
             rect(40, 40),
             area(),
             body({ isStatic: true }),
-            color(100, 100, 100),
+            color(80, 80, 80),
             "platform",
         ],
     },
 })
 
-// Add player
+// 3. ADD THE PLAYER
 const player = add([
     rect(32, 48),
-    pos(80, 80),
+    pos(100, 100), // Starting position
     area(),
-    body(),
+    body(), // This makes gravity affect the player
     color(0, 255, 0),
 ])
 
-// --- MOVEMENT TECH LOGIC ---
+// 4. CONTROLS (WASD + ARROWS)
 
+// Left
 onKeyDown("left", () => {
     player.move(-SPEED, 0)
 })
+onKeyDown("a", () => {
+    player.move(-SPEED, 0)
+})
 
+// Right
 onKeyDown("right", () => {
     player.move(SPEED, 0)
 })
+onKeyDown("d", () => {
+    player.move(SPEED, 0)
+})
 
-onKeyPress("space", () => {
+// Jump (Space or W or Up)
+const jumpAction = () => {
     if (player.isGrounded()) {
         player.jump(JUMP_FORCE)
     }
-})
+}
 
-// Slide Mechanic (The "Tech")
-onKeyDown("down", () => {
-    if (player.isGrounded()) {
-        // Boost speed while holding down
-        const dir = isKeyDown("right") ? 1 : isKeyDown("left") ? -1 : 0
-        player.move(dir * SLIDE_SPEED, 0)
-        player.height = 24 // Squish the player to slide under gaps
-    }
-})
+onKeyPress("space", jumpAction)
+onKeyPress("w", jumpAction)
+onKeyPress("up", jumpAction)
 
-onKeyRelease("down", () => {
-    player.height = 48 // Return to normal height
+// 5. THE CAMERA
+// This makes the screen follow the player as they race
+onUpdate(() => {
+    camPos(player.pos)
 })

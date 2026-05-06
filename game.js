@@ -1,10 +1,14 @@
 import kaboom from "https://unpkg.com/kaboom@3000.0.1/dist/kaboom.mjs"
 
+<<<<<<< HEAD
 // Initialize Kaboom
+=======
+>>>>>>> eea4c7ddac30b82e42ca2a63d71b2c8c92cc9823
 kaboom({
     background: [30, 30, 30],
 })
 
+<<<<<<< HEAD
 // 1. PHYSICS CONSTANTS
 const SPEED = 440
 const JUMP_FORCE = 800
@@ -20,6 +24,22 @@ addLevel([
     "                                                           ",
     "                                          =======          ",
     "===========================================================",
+=======
+// 1. SET THE PHYSICS CONSTANTS
+const SPEED = 400
+const JUMP_FORCE = 800
+setGravity(2400) // This makes the player fall
+
+// 2. DESIGN THE LEVEL
+// "=" is a platform, "@" is where the player starts
+addLevel([
+    "                        ",
+    "                        ",
+    "                        ",
+    "    @                   ",
+    "                        ",
+    "========================",
+>>>>>>> eea4c7ddac30b82e42ca2a63d71b2c8c92cc9823
 ], {
     tileWidth: 40,
     tileHeight: 40,
@@ -34,18 +54,26 @@ addLevel([
     },
 })
 
+<<<<<<< HEAD
 // 3. THE PLAYER
 const player = add([
     rect(32, 48),
     pos(100, 100),
+=======
+// 3. ADD THE PLAYER
+const player = add([
+    rect(32, 48),
+    pos(100, 100), // Starting position
+>>>>>>> eea4c7ddac30b82e42ca2a63d71b2c8c92cc9823
     area(),
-    body(),
+    body(), // This makes gravity affect the player
     color(0, 255, 0),
     {
         isSliding: false,
     }
 ])
 
+<<<<<<< HEAD
 // 4. MOVEMENT CONTROLS (WASD + ARROWS)
 
 // Left Movement
@@ -58,11 +86,34 @@ onKeyDown("d", () => player.move(SPEED, 0))
 
 // Jump Function
 const jump = () => {
+=======
+// 4. CONTROLS (WASD + ARROWS)
+
+// Left
+onKeyDown("left", () => {
+    player.move(-SPEED, 0)
+})
+onKeyDown("a", () => {
+    player.move(-SPEED, 0)
+})
+
+// Right
+onKeyDown("right", () => {
+    player.move(SPEED, 0)
+})
+onKeyDown("d", () => {
+    player.move(SPEED, 0)
+})
+
+// Jump (Space or W or Up)
+const jumpAction = () => {
+>>>>>>> eea4c7ddac30b82e42ca2a63d71b2c8c92cc9823
     if (player.isGrounded()) {
         player.jump(JUMP_FORCE)
     }
 }
 
+<<<<<<< HEAD
 onKeyPress("space", jump)
 onKeyPress("w", jump)
 onKeyPress("up", jump)
@@ -98,3 +149,14 @@ onKeyRelease("s", () => {
 onUpdate(() => {
     camPos(player.pos)
 })
+=======
+onKeyPress("space", jumpAction)
+onKeyPress("w", jumpAction)
+onKeyPress("up", jumpAction)
+
+// 5. THE CAMERA
+// This makes the screen follow the player as they race
+onUpdate(() => {
+    camPos(player.pos)
+})
+>>>>>>> eea4c7ddac30b82e42ca2a63d71b2c8c92cc9823

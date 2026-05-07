@@ -7,8 +7,8 @@ kaboom({
 // 1. LOAD THE SPRITE
 // We assume the sheet has 4 frames for idle, 6 for run, etc.
 // Adjust 'sliceX' and 'sliceY' if the monster looks weird/cut off!
-loadSprite("monster", "Pink_Monster.png", {
-    sliceX: 6, // Number of sprites in a horizontal row
+loadSprite("monster", "Pink_Monster_Idle_4.png", {
+    sliceX: 4, // Number of sprites in a horizontal row
     sliceY: 1, // Number of rows (change to 6 or 8 if it's a big square sheet)
     anims: {
         "idle": { from: 0, to: 1, loop: true },

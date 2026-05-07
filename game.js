@@ -4,7 +4,6 @@ kaboom({
     background: [30, 30, 30],
 })
 
-<<<<<<< HEAD
 // 1. PHYSICS CONSTANTS
 const SPEED = 440
 const JUMP_FORCE = 800

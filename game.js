@@ -1,9 +1,5 @@
 import kaboom from "https://unpkg.com/kaboom@3000.0.1/dist/kaboom.mjs"
 
-<<<<<<< HEAD
-// Initialize Kaboom
-=======
->>>>>>> eea4c7ddac30b82e42ca2a63d71b2c8c92cc9823
 kaboom({
     background: [30, 30, 30],
 })

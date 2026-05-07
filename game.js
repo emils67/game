@@ -4,29 +4,41 @@ kaboom({
     background: [30, 30, 30],
 })
 
-// Use the built-in Bean mascot (No file download needed)
-loadSprite("bean", "https://kaboomjs.com/sprites/bean.png")
+// 1. LOAD THE INDIE HERO (8-bit style with animations)
+loadSprite("hero", "https://kaboomjs.com/sprites/guy.png", {
+    sliceX: 10, // The image has 10 frames in a row
+    anims: {
+        "idle": { from: 0, to: 0 },
+        "run": { from: 2, to: 5, loop: true, speed: 12 },
+        "jump": { from: 6, to: 6 },
+        "roll": { from: 7, to: 9, loop: true, speed: 20 },
+    }
+})
 
 const SPEED = 480
-const ROLL_SPEED = 950 
-const JUMP_FORCE = 950 
+const ROLL_SPEED = 900
+const JUMP_FORCE = 950
 
 setGravity(2800)
 
+// 2. THE PLAYER
 const player = add([
-    sprite("bean"),
+    sprite("hero", { anim: "idle" }),
     pos(100, 100),
     area(),
     body(),
-    scale(1.5),
+    scale(2), // Scale him up so he's not TOO tiny
     { isRolling: false }
 ])
 
-// MOVEMENT
+// 3. MOVEMENT & ANIMATION LOGIC
 onKeyDown("left", () => {
     if (!player.isRolling) {
         player.move(-SPEED, 0)
         player.flipX = true
+        if (player.isGrounded() && player.curAnim() !== "run") {
+            player.play("run")
+        }
     }
 })
 
@@ -34,40 +46,47 @@ onKeyDown("right", () => {
     if (!player.isRolling) {
         player.move(SPEED, 0)
         player.flipX = false
+        if (player.isGrounded() && player.curAnim() !== "run") {
+            player.play("run")
+        }
     }
 })
 
-// ROLL (Press S, Down, or Shift)
+// Return to idle when keys are released
+onKeyRelease(["left", "right", "a", "d"], () => {
+    if (player.isGrounded() && !player.isRolling) {
+        player.play("idle")
+    }
+})
+
+// 4. THE ROLL (Shift or S)
 const startRoll = () => {
     if (player.isGrounded() && !player.isRolling) {
         player.isRolling = true
+        player.play("roll")
+        
         const dir = player.flipX ? -1 : 1
         player.vel.x = dir * ROLL_SPEED
-        
-        // Visual "Roll" effect
-        player.scale.y = 0.8 
-        player.color = rgb(150, 255, 150)
 
         wait(0.4, () => {
             player.isRolling = false
-            player.scale.y = 1.5
-            player.color = rgb(255, 255, 255)
+            player.play("idle")
         })
     }
 }
 
 onKeyPress("s", startRoll)
-onKeyPress("down", startRoll)
 onKeyPress("shift", startRoll)
 
-// JUMP
+// 5. JUMP
 onKeyPress("space", () => {
-    if (player.isGrounded() && !player.isRolling) {
+    if (player.isGrounded()) {
         player.jump(JUMP_FORCE)
+        player.play("jump")
     }
 })
 
-// FLOOR
+// 6. THE WORLD
 add([
     rect(width() * 20, 48),
     pos(0, height() - 48),

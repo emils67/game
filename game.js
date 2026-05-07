@@ -4,89 +4,64 @@ kaboom({
     background: [30, 30, 30],
 })
 
-// 1. LOAD THE INDIE HERO (8-bit style with animations)
-loadSprite("hero", "https://kaboomjs.com/sprites/guy.png", {
-    sliceX: 10, // The image has 10 frames in a row
+// 1. LOAD THE SPRITE
+// We assume the sheet has 4 frames for idle, 6 for run, etc.
+// Adjust 'sliceX' and 'sliceY' if the monster looks weird/cut off!
+loadSprite("monster", "Pink_Monster.png", {
+    sliceX: 6, // Number of sprites in a horizontal row
+    sliceY: 1, // Number of rows (change to 6 or 8 if it's a big square sheet)
     anims: {
-        "idle": { from: 0, to: 0 },
-        "run": { from: 2, to: 5, loop: true, speed: 12 },
-        "jump": { from: 6, to: 6 },
-        "roll": { from: 7, to: 9, loop: true, speed: 20 },
+        "idle": { from: 0, to: 1, loop: true },
+        "run": { from: 2, to: 5, loop: true, speed: 10 },
     }
 })
 
 const SPEED = 480
-const ROLL_SPEED = 900
-const JUMP_FORCE = 950
+const JUMP_FORCE = 900
 
-setGravity(2800)
+setGravity(2600)
 
 // 2. THE PLAYER
 const player = add([
-    sprite("hero", { anim: "idle" }),
+    sprite("monster", { anim: "idle" }),
     pos(100, 100),
     area(),
     body(),
-    scale(2), // Scale him up so he's not TOO tiny
-    { isRolling: false }
+    scale(2), // Makes the tiny pixel man bigger
 ])
 
-// 3. MOVEMENT & ANIMATION LOGIC
+// 3. CONTROLS WITH ANIMATIONS
 onKeyDown("left", () => {
-    if (!player.isRolling) {
-        player.move(-SPEED, 0)
-        player.flipX = true
-        if (player.isGrounded() && player.curAnim() !== "run") {
-            player.play("run")
-        }
+    player.move(-SPEED, 0)
+    player.flipX = true // Face left
+    if (player.isGrounded() && player.curAnim() !== "run") {
+        player.play("run")
     }
 })
 
 onKeyDown("right", () => {
-    if (!player.isRolling) {
-        player.move(SPEED, 0)
-        player.flipX = false
-        if (player.isGrounded() && player.curAnim() !== "run") {
-            player.play("run")
-        }
+    player.move(SPEED, 0)
+    player.flipX = false // Face right
+    if (player.isGrounded() && player.curAnim() !== "run") {
+        player.play("run")
     }
 })
 
-// Return to idle when keys are released
-onKeyRelease(["left", "right", "a", "d"], () => {
-    if (player.isGrounded() && !player.isRolling) {
+// Go back to idle when keys are released
+onKeyRelease(["left", "right"], () => {
+    if (player.isGrounded()) {
         player.play("idle")
     }
 })
 
-// 4. THE ROLL (Shift or S)
-const startRoll = () => {
-    if (player.isGrounded() && !player.isRolling) {
-        player.isRolling = true
-        player.play("roll")
-        
-        const dir = player.flipX ? -1 : 1
-        player.vel.x = dir * ROLL_SPEED
-
-        wait(0.4, () => {
-            player.isRolling = false
-            player.play("idle")
-        })
-    }
-}
-
-onKeyPress("s", startRoll)
-onKeyPress("shift", startRoll)
-
-// 5. JUMP
 onKeyPress("space", () => {
     if (player.isGrounded()) {
         player.jump(JUMP_FORCE)
-        player.play("jump")
+        // No animation for jump yet until we know your sheet layout
     }
 })
 
-// 6. THE WORLD
+// 4. THE WORLD
 add([
     rect(width() * 20, 48),
     pos(0, height() - 48),

@@ -4,65 +4,70 @@ kaboom({
     background: [30, 30, 30],
 })
 
-// 1. LOAD THE SPRITE
-// We assume the sheet has 4 frames for idle, 6 for run, etc.
-// Adjust 'sliceX' and 'sliceY' if the monster looks weird/cut off!
+// 1. LOAD THE IDLE STRIP
 loadSprite("monster", "Pink_Monster_Idle_4.png", {
-loadSprite("run-sprite", "Pink_Monster_Run_6.png", { sliceX: 12 })
-    sliceX: 4, // Number of sprites in a horizontal row
-    sliceY: 1, // Number of rows (change to 6 or 8 if it's a big square sheet)
+    sliceX: 4, 
+    sliceY: 1,
     anims: {
-        "idle": { from: 0, to: 1, loop: true },
-        "run": { from: 2, to: 5, loop: true, speed: 10 },
+        "idle": { from: 0, to: 3, loop: true },
+    }
+})
+
+// 2. LOAD THE RUN STRIP (as a separate sprite)
+loadSprite("monster_run", "Pink_Monster_Run_6.png", {
+    sliceX: 6, 
+    sliceY: 1,
+    anims: {
+        "run": { from: 0, to: 5, loop: true },
     }
 })
 
 const SPEED = 480
 const JUMP_FORCE = 900
-
 setGravity(2600)
 
-// 2. THE PLAYER
+// 3. THE PLAYER
 const player = add([
     sprite("monster", { anim: "idle" }),
     pos(100, 100),
     area(),
     body(),
-    scale(2), // Makes the tiny pixel man bigger
+    scale(2),
 ])
 
-// 3. CONTROLS WITH ANIMATIONS
+// 4. CONTROLS
 onKeyDown("left", () => {
     player.move(-SPEED, 0)
-    player.flipX = true // Face left
-    if (player.isGrounded() && player.curAnim() !== "run") {
+    player.flipX = true
+    // Switch to run sprite when moving
+    if (player.curAnim() !== "run") {
+        player.use(sprite("monster_run"))
         player.play("run")
     }
 })
 
 onKeyDown("right", () => {
     player.move(SPEED, 0)
-    player.flipX = false // Face right
-    if (player.isGrounded() && player.curAnim() !== "run") {
+    player.flipX = false
+    if (player.curAnim() !== "run") {
+        player.use(sprite("monster_run"))
         player.play("run")
     }
 })
 
-// Go back to idle when keys are released
+// Go back to idle sprite when stopping
 onKeyRelease(["left", "right"], () => {
-    if (player.isGrounded()) {
-        player.play("idle")
-    }
+    player.use(sprite("monster"))
+    player.play("idle")
 })
 
 onKeyPress("space", () => {
     if (player.isGrounded()) {
         player.jump(JUMP_FORCE)
-        // No animation for jump yet until we know your sheet layout
     }
 })
 
-// 4. THE WORLD
+// 5. THE WORLD
 add([
     rect(width() * 20, 48),
     pos(0, height() - 48),
